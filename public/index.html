@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      .container {
+        margin-top: 50px;
+        height: 100vh;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 10px;
+        width: 600px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #dedede;
+      }
+      .result {
+        margin-top: 20px;
+        font-size: 1.2em;
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shortener</h1>
+      <p>by qminlee723</p>
+      <input type="text" id="urlInput" placeholder="https://example.com" />
+      <button onclick="shortenURL()">Shorten URL</button>
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      async function shortenURL() {
+        const url = document.getElementById("urlInput").value;
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url }),
+        });
+        const data = await response.json();
+        document.getElementById(
+          "result"
+        ).innerHTML = `Shortend URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+      }
+    </script>
+  </body>
+</html>
