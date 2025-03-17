@@ -21,8 +21,6 @@ db.serialize(() => {
 
 // URL Shortening
 app.post("/shorten", (req, res) => {
-  console.log("req.body", req.body);
-
   let { url } = req.body;
 
   // Check if the URL is provided
