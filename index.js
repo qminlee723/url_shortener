@@ -7,6 +7,10 @@ const cors = require("cors");
 
 app.use(cors()); // CORS 설정
 
+app.use(express.json()); // body-parser
+
+app.use(express.static("public")); // HTML, CSS, JS
+
 // Create a new database
 let db = new sqlite3.Database(":memory:"); // 서버 켜져 있을 때만 유지
 db.serialize(() => {
@@ -15,15 +19,17 @@ db.serialize(() => {
   );
 });
 
-app.use(express.json()); // body-parser
-
-app.use(express.static("public")); // HTML, CSS, JS
-
 // URL Shortening
 app.post("/shorten", (req, res) => {
+  console.log("req.body", req.body);
+
   let { url } = req.body;
 
-  // Check if the URL is valid
+  // Check if the URL is provided
+  if (!url || !url.trim()) {
+    return res.status(400).json({ error: "URL is required" });
+  }
+
   if (!/^https?:\/\//.test(url)) {
     url = `http://${url}`;
   }
@@ -34,7 +40,9 @@ app.post("/shorten", (req, res) => {
     [url],
     (err, row) => {
       if (row) {
-        res.json({ shortUrl: `http://localhost:${PORT}/${row.shortCode}` });
+        return res.json({
+          shortUrl: `http://localhost:${PORT}/${row.shortCode}`,
+        });
       } else {
         const shortCode = nanoid(6);
         db.run(
@@ -42,9 +50,13 @@ app.post("/shorten", (req, res) => {
           [shortCode, url],
           (err) => {
             if (err) {
-              res.status(500).json({ error: "Failed to shorten the URL" });
+              return res
+                .status(500)
+                .json({ error: "Failed to shorten the URL" });
             } else {
-              res.json({ shortUrl: `http://localhost:${PORT}/${shortCode}` });
+              return res.json({
+                shortUrl: `http://localhost:${PORT}/${shortCode}`,
+              });
             }
           }
         );

@@ -53,6 +53,7 @@
     <script>
       async function shortenURL() {
         const url = document.getElementById("urlInput").value;
+
         const response = await fetch("http://localhost:3000/shorten", {
           method: "POST",
           headers: {
@@ -60,7 +61,14 @@
           },
           body: JSON.stringify({ url }),
         });
+
         const data = await response.json();
+
+        if (data.error) {
+          document.getElementById("result").innerHTML = data.error;
+          return;
+        }
+
         document.getElementById(
           "result"
         ).innerHTML = `Shortend URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
