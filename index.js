@@ -3,6 +3,9 @@ const sqlite3 = require("sqlite3").verbose();
 const { nanoid } = require("nanoid"); // unique id generator
 const app = express();
 const PORT = 3000;
+const cors = require("cors");
+
+app.use(cors()); // CORS 설정
 
 // Create a new database
 let db = new sqlite3.Database(":memory:"); // 서버 켜져 있을 때만 유지
@@ -26,24 +29,28 @@ app.post("/shorten", (req, res) => {
   }
 
   // Check if the URL already exists in the database
-  db.get("SELECT short FROM urls WHERE originalUrl = ?", [url], (err, row) => {
-    if (row) {
-      res.json({ shortUrl: `http://localhost:${PORT}/${row.shortCode}` });
-    } else {
-      const shortCode = nanoid(6);
-      db.run(
-        "INSERT INTO urls (shortCode, originalUrl) VALUES (?, ?)",
-        [shortCode, url],
-        (err) => {
-          if (err) {
-            res.status(500).json({ error: "Failed to shorten the URL" });
-          } else {
-            res.json({ shortUrl: `http://localhost:${PORT}/${shortCode}` });
+  db.get(
+    "SELECT shortCode FROM urls WHERE originalUrl = ?",
+    [url],
+    (err, row) => {
+      if (row) {
+        res.json({ shortUrl: `http://localhost:${PORT}/${row.shortCode}` });
+      } else {
+        const shortCode = nanoid(6);
+        db.run(
+          "INSERT INTO urls (shortCode, originalUrl) VALUES (?, ?)",
+          [shortCode, url],
+          (err) => {
+            if (err) {
+              res.status(500).json({ error: "Failed to shorten the URL" });
+            } else {
+              res.json({ shortUrl: `http://localhost:${PORT}/${shortCode}` });
+            }
           }
-        }
-      );
+        );
+      }
     }
-  });
+  );
 });
 
 // Redirect to the original URL
@@ -57,7 +64,7 @@ app.get("/:shortCode", (req, res) => {
       if (row) {
         res.redirect(row.originalUrl);
       } else {
-        res.status(404).json("URL not found");
+        res.status(404).json({ error: "URL not found" });
       }
     }
   );

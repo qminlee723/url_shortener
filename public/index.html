@@ -46,13 +46,14 @@
       <p>by qminlee723</p>
       <input type="text" id="urlInput" placeholder="https://example.com" />
       <button onclick="shortenURL()">Shorten URL</button>
+
       <div class="result" id="result"></div>
     </div>
 
     <script>
       async function shortenURL() {
         const url = document.getElementById("urlInput").value;
-        const response = await fetch("/shorten", {
+        const response = await fetch("http://localhost:3000/shorten", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
