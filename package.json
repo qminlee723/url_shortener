@@ -1,0 +1,25 @@
+{
+  "name": "url_shortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qminlee723/url_shortener.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qminlee723/url_shortener/issues"
+  },
+  "homepage": "https://github.com/qminlee723/url_shortener#readme",
+  "dependencies": {
+    "express": "^4.21.2",
+    "nanoid": "^5.1.4",
+    "sqlite3": "^5.1.7"
+  }
+}
